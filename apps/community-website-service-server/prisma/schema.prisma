@@ -1,0 +1,59 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model MatrimonialProfile {
+  compatibilityScore        Int?
+  createdAt                 DateTime @default(now())
+  id                        String   @id @default(cuid())
+  profileCompatibilityScore Int?
+  profileUser               String?
+  updatedAt                 DateTime @updatedAt
+  users                     User[]
+}
+
+model FamilyMember {
+  createdAt          DateTime @default(now())
+  familyOrigin       String?
+  familyRelationship String?
+  id                 String   @id @default(cuid())
+  origin             String?
+  relationship       String?
+  updatedAt          DateTime @updatedAt
+  users              User[]
+}
+
+model Advertisement {
+  createdAt   DateTime @default(now())
+  description String?
+  id          String   @id @default(cuid())
+  image       Json?
+  title       String?
+  updatedAt   DateTime @updatedAt
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+model User {
+  advertisements       Advertisement[]
+  createdAt            DateTime            @default(now())
+  email                String?             @unique
+  familyMember         FamilyMember?       @relation(fields: [familyMemberId], references: [id])
+  familyMemberId       String?
+  firstName            String?
+  id                   String              @id @default(cuid())
+  lastName             String?
+  matrimonialProfile   MatrimonialProfile? @relation(fields: [matrimonialProfileId], references: [id])
+  matrimonialProfileId String?
+  password             String
+  profileVisible       Boolean?
+  role                 String?
+  roles                Json
+  updatedAt            DateTime            @updatedAt
+  username             String              @unique
+}
